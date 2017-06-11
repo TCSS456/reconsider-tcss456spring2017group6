@@ -10,20 +10,12 @@ This simple application uses WebSockets to run a primitive chat server.
 import nltk
 nltk.data.path.append('nltk_data')
 import numpy as np
+import json
 
 from nltk.stem import WordNetLemmatizer
 from sklearn.linear_model import LogisticRegression
-from bs4 import BeautifulSoup
 
 import scipy
-import os
-import logging
-import redis
-import gevent
-import nltk
-from flask import Flask, render_template
-from flask_sockets import Sockets
-
 
 # Tokenize the text using nltk's tokenizer
 # let's take the first review for example:
@@ -97,20 +89,23 @@ positiveTokenizedArray = []
 negativeTokenizedArray = []
 
 for review in posReviews:
-    tokens = myTokenizer(review.text)
-    positiveTokenizedArray.append(tokens)
+    tokens = myTokenizer(review["text"])
+    if len(tokens) > 0:
+        positiveTokenizedArray.append(tokens)
     for token in tokens:
         if token not in wordToIndexMap:
             wordToIndexMap[token] = currentIdx
             currentIdx += 1
 
 for review in negReviews:
-    tokens = myTokenizer(review.text)
-    negativeTokenizedArray.append(tokens)
+    tokens = myTokenizer(review["text"])
+    if len(tokens) > 0:
+        negativeTokenizedArray.append(tokens)
     for token in tokens:
         if token not in wordToIndexMap:
             wordToIndexMap[token] = currentIdx
             currentIdx += 1
+
 
 
 #print(wordToIndexMap)
