@@ -8,6 +8,7 @@ This simple application uses WebSockets to run a primitive chat server.
 """
 
 import nltk
+nltk.data.path.append('nltk_data')
 import numpy as np
 
 from nltk.stem import WordNetLemmatizer
@@ -74,11 +75,15 @@ stopwords = set(w.rstrip() for w in open('stopwords.txt'))
 # http://www.cs.jhu.edu/~mdredze/datasets/sentiment/index2.html
 # Our sentiment analysis program relies on the research they did
 
-posReviews = BeautifulSoup(open('positive.review').read())
-posReviews = posReviews.findAll('review_text')
+posReviews = []
+with open('nltk_data/twitter_samples/positive_tweets.json', 'r') as json_file:
+    for line in json_file:
+        posReviews.append(json.loads(line))
 
-negReviews = BeautifulSoup(open('negative.review').read())
-negReviews = negReviews.findAll('review_text')
+negReviews = []
+with open('nltk_data/twitter_samples/negative_tweets.json', 'r') as json_file:
+    for line in json_file:
+        negReviews.append(json.loads(line))
 
 #np.random.shuffle(posReviews)
 #posReviews = posReviews[:len(negReviews)]
@@ -135,8 +140,6 @@ Y = data[:,-1]
 # last 100 rows will be test
 Xtrain = X[:-1000,]
 Ytrain = Y[:-1000,]
-Xtest = X[-1000:,]
-Ytest = Y[-1000:,]
 
 model = LogisticRegression()
 model.fit(Xtrain, Ytrain)
@@ -146,7 +149,7 @@ model.fit(Xtrain, Ytrain)
 
 print("##########################################################################################\n\n")
 
-    
+
 
 def semantic(message):
     message = message.split(' ')
